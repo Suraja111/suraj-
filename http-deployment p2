@@ -1,0 +1,17 @@
+pipeline{
+    agent{
+        label{
+            label "built-in"
+        } 
+    }
+    stages{
+        stage("httpd"){
+            steps{
+                sh "sudo yum install httpd -y"
+                sh " sudo service httpd start"
+                sh "echo 'hello all to u' > /var/www/html/index.html"
+                sh "chmod -R 777 /var/www/html"
+    }
+}
+}
+}
