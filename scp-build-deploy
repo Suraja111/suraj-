@@ -1,0 +1,33 @@
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/wp"
+        } 
+    }
+    stages{
+        stage("clone"){
+            steps{
+                sh "rm -rf *"
+               sh "git clone https://github.com/Suraja111/project.git"
+        
+    }
+}
+stage("build"){
+            steps{
+               sh "rm -rf /root/.m2"
+                sh "cd project && mvn clean install -DskipTests=true"
+                
+                
+}
+}
+stage("deploy"){
+            steps{
+              
+                sh "scp -r -i /mnt/Linux_Mum.pem /mnt/wp/project/target/LoginWebApp.war ec2-user@172.31.32.189:/root/apache-tomcat-9.0.89/webapps"
+                
+                
+}
+}
+}
+}
