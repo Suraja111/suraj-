@@ -1,0 +1,40 @@
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/gp"
+        } 
+    }
+    stages{
+stage("clone"){
+            steps{
+              sh "rm -rf *"
+              sh "git clone https://github.com/Suraja111/project.git"
+}
+}
+stage("build"){
+            steps{
+              sh "rm -rf /root/.m2"
+                sh "cd project && mvn clean install -DskipTests=true"
+                
+                
+}
+}
+stage("deploy"){
+            steps{
+              sh "rm -rf /mnt/ss"
+                sh "cp -r /mnt/gp/project/target/LoginWebApp.war /mnt"
+                
+                
+}
+}
+stage("image"){
+          
+            steps{
+            
+             
+                sh "docker build -t mytomcat /mnt"
+}
+}
+}
+}
