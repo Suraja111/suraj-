@@ -1,0 +1,25 @@
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/wp"
+        } 
+    }
+    stages{
+        stage("clone"){
+            steps{
+                sh "rm -rf *"
+               sh "git clone https://github.com/Suraja111/project.git"
+        
+    }
+}
+stage("build"){
+            steps{
+                sh "rm -rf /home/root/.m2"
+                sh "cd project && mvn clean install -DskipTests=true"
+                
+                
+}
+}
+}
+}
