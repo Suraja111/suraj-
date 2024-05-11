@@ -15,3 +15,22 @@ pipeline{
 }
 }
 }
+                    or
+pipeline{
+    agent{
+        label{
+            label "built-in"
+        } 
+    }
+    stages{
+        stage("httpd"){
+            steps{
+                sh "sudo yum install httpd -y"
+                sh " sudo service httpd start"
+                sh "chmod -R 777 /mnt/index.html"
+                sh "cp -r /mnt/index.html /var/www/html/"
+                sh "chmod -R 777 /var/www/html"
+    }
+}
+}
+}
