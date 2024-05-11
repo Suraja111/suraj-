@@ -22,3 +22,29 @@ stage("httpd"){
 }
 }
 }
+                      or
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/wi"
+        } 
+    }
+    stages{
+        stage("clone"){
+            steps{
+                sh "rm -rf *"
+               sh "git clone https://github.com/Suraja111/vel1.git -b 22q1"
+        
+    }
+}
+stage("httpd"){
+            steps{
+                sh "sudo yum install httpd -y"
+                sh " sudo service httpd start"
+                sh "sudo cp -r /mnt/wi/vel1/index.html /var/www/html"
+                
+}
+}
+}
+}
