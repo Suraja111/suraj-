@@ -1,0 +1,36 @@
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/wp"
+        } 
+    }
+    stages{
+        stage("container"){
+            steps{
+                sh "docker kill container1"
+                sh "docker rm container1"
+                sh "docker run --name container1 -itdp 70:80 httpd"
+               
+        
+    }
+}
+stage("clone"){
+            steps{
+              sh "rm -rf *"
+              sh "git clone https://github.com/Suraja111/vel1.git -b 22q1"
+              
+                
+                
+}
+}
+stage("deploy"){
+            steps{
+              
+                sh "docker cp /mnt/wp/vel1/index.html container1:/usr/local/apache2/htdocs"
+                
+                
+}
+}
+}
+}
