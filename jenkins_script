@@ -1,0 +1,14 @@
+amazon-linux-extras install java-openjdk11 -y
+yum install git  -y
+yum install docker -y
+systemctl start docker
+systemctl enable docker
+wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.89/bin/apache-tomcat-9.0.89.zip  -P /mnt/
+unzip /mnt/apache-tomcat-9.0.89.zip  -d /mnt
+chmod -R 777 /mnt/apache-tomcat-9.0.89
+rm –rf /mnt/apache-tomcat-9.0.89.zip
+wget https://get.jenkins.io/war-stable/2.414.3/jenkins.war  -P /mnt/apache-tomcat-9.0.89/webapps/
+cd /mnt/apache-tomcat-9.0.89/bin
+./startup.sh
+#####################################################################################
+cat /root/.jenkins/secrets/initialAdminPassword
