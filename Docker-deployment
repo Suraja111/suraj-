@@ -6,11 +6,18 @@ pipeline{
         } 
     }
     stages{
+        stage('Remove Docker Containers') {
+            steps {
+                script {
+                    sh 'docker ps -q | xargs --no-run-if-empty docker stop'
+                    sh 'docker container prune -f'
+                }
+            }
+        }
         stage("container"){
             steps{
-                sh "docker kill container1"
-                sh "docker rm container1"
-                sh "docker run --name container1 -itdp 70:80 httpd"
+               
+                sh "docker run --name vtrn4543 -itdp 70:80 httpd"
                
         
     }
@@ -26,11 +33,12 @@ stage("clone"){
 }
 stage("deploy"){
             steps{
-              
-                sh "docker cp /mnt/wp/vel1/index.html container1:/usr/local/apache2/htdocs"
+              sh "chmod -R 777 /mnt/wp/vel1/index.html"
+                sh "docker cp /mnt/wp/vel1/index.html vtrn4543:/usr/local/apache2/htdocs"
                 
                 
 }
 }
 }
 }
+
