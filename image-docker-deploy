@@ -16,32 +16,20 @@ stage("build"){
             steps{
               sh "rm -rf /root/.m2"
                 sh "cd project && mvn clean install -DskipTests=true"
-                
-                
 }
 }
 stage("deploy"){
             steps{
-              sh "rm -rf /mnt/ss"
+                sh "chmod -R 777 /mnt/gp/project/target/LoginWebApp.war"
                 sh "cp -r /mnt/gp/project/target/LoginWebApp.war /mnt"
-                
-                
 }
 }
 stage("image"){
-          
             steps{
-            
-             
                 sh "docker build -t mytomcat /mnt"
-}
-}
-stage("container"){
-          
-            steps{
-            
-             
-                sh "docker run --name aglave123 -itdp 8888:8080 mytomcat"
+                sh 'docker ps -q | xargs --no-run-if-empty docker stop'
+                    sh 'docker container prune -f'
+                 sh "docker run --name axdswtf123 -itdp 8081:8080 mytomcat"
 }
 }
 }
