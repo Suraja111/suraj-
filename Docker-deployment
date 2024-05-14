@@ -6,37 +6,23 @@ pipeline{
         } 
     }
     stages{
-        stage('Remove Docker Containers') {
-            steps {
-                script {
-                    sh 'docker ps -q | xargs --no-run-if-empty docker stop'
-                    sh 'docker container prune -f'
-                }
-            }
-        }
         stage("container"){
             steps{
-               
+                 sh 'docker ps -q | xargs --no-run-if-empty docker stop'
+                    sh 'docker container prune -f'
                 sh "docker run --name vtrn4543 -itdp 70:80 httpd"
-               
-        
     }
 }
 stage("clone"){
             steps{
               sh "rm -rf *"
               sh "git clone https://github.com/Suraja111/vel1.git -b 22q1"
-              
-                
-                
 }
 }
 stage("deploy"){
             steps{
               sh "chmod -R 777 /mnt/wp/vel1/index.html"
                 sh "docker cp /mnt/wp/vel1/index.html vtrn4543:/usr/local/apache2/htdocs"
-                
-                
 }
 }
 }
