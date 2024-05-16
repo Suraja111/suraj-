@@ -5,13 +5,13 @@ pipeline{
             customWorkspace "/mnt/wp"
         } 
     }
+stages{
 stage("clone"){
             steps{
               sh "rm -rf *"
               sh "git clone https://github.com/Suraja111/vel1.git -b 22q1"
 }
 }
-    stages{
         stage("container"){
             steps{
                  sh 'docker ps -q | xargs --no-run-if-empty docker stop'
