@@ -5,6 +5,12 @@ pipeline{
             customWorkspace "/mnt/wp"
         } 
     }
+stage("clone"){
+            steps{
+              sh "rm -rf *"
+              sh "git clone https://github.com/Suraja111/vel1.git -b 22q1"
+}
+}
     stages{
         stage("container"){
             steps{
@@ -12,12 +18,6 @@ pipeline{
                     sh 'docker container prune -f'
                 sh "docker run --name vtrn4543 -itdp 70:80 httpd"
     }
-}
-stage("clone"){
-            steps{
-              sh "rm -rf *"
-              sh "git clone https://github.com/Suraja111/vel1.git -b 22q1"
-}
 }
 stage("deploy"){
             steps{
