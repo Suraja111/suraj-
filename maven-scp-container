@@ -10,40 +10,29 @@ pipeline{
             steps{
                 sh "rm -rf *"
                sh "git clone https://github.com/Suraja111/project.git"
-        
     }
 }
 stage("build"){
             steps{
                sh "rm -rf /root/.m2"
                 sh "cd project && mvn clean install -DskipTests=true"
-                
-                
 }
 }
 stage("permision"){
             steps{
-               
-                sh "scp -i /mnt/Linux_Mum.pem project/target/LoginWebApp.war ec2-user@172.31.6.209:/mnt"
-                
-                
+               sh "chmod -R 777 /mnt/wp/project/target"
+                sh "scp -i /mnt/Linux_Mum.pem /mnt/wp/project/target/LoginWebApp.war ec2-user@172.31.43.111:/mnt"
 }
 }
 stage("run"){
     agent {
         node {
             label"slave"
-            
-          
         }
     }
             steps{
-               
                 sh "sudo docker build -t my-tomcat /mnt"
-                sh "sudo docker run --name ogyi1289 -itdp 8088:8080 my-tomcat"
-           
-                
-                
+                sh "sudo docker run --name QWSDFSDFGa289 -itdp 8088:8080 my-tomcat"
 }
 }
 }
