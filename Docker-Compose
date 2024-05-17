@@ -1,0 +1,54 @@
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/wp"
+        } 
+    }
+    stages{
+        stage("clone"){
+            steps{
+                sh "rm -rf *"
+               sh "git clone https://github.com/Suraja111/project.git"
+    }
+}
+stage("build"){
+            steps{
+               sh "rm -rf /root/.m2"
+                sh "cd project && mvn clean install -DskipTests=true"
+}
+}
+stage("permision"){
+            steps{
+               sh "chmod -R 777 /mnt/wp/project/target"
+                sh "scp -i /mnt/Linux_Mum.pem /mnt/wp/project/target/LoginWebApp.war ec2-user@172.31.12.101:/mnt"
+}
+}
+stage("copy on slave"){
+    agent {
+        node {
+            label"slave"
+        
+            
+        }
+    }
+            steps{
+                sh "sudo cp /mnt/LoginWebApp.war /mnt/compose/file-1"
+                sh "sudo cp /mnt/LoginWebApp.war /mnt/compose/file-2"
+}
+}
+stage("deploy on slave"){
+    agent {
+        node {
+            label"slave"
+             customWorkspace "/mnt/compose"
+            
+        }
+    }
+            steps{
+                sh "sudo docker-compose up -d"
+                
+}
+}
+}
+}
