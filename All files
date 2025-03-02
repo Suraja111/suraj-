@@ -1,0 +1,439 @@
+http-deployment pipeline
+pipeline{
+    agent{
+        label{
+            label "built-in"
+        } 
+    }
+    stages{
+        stage("httpd"){
+            steps{
+                sh "sudo yum install httpd -y"
+                sh " sudo service httpd start"
+            }
+        }
+        stage("index.html"){
+            steps{
+                sh "echo 'hello all' > /var/www/html/index.html"
+                sh "chmod -R 777 /var/www/html"
+    }
+}
+}
+}
+
+
+http-deployment p2
+pipeline{
+    agent{
+        label{
+            label "built-in"
+        } 
+    }
+    stages{
+        stage("httpd"){
+            steps{
+                sh "sudo yum install httpd -y"
+                sh " sudo service httpd start"
+                sh "echo 'hello all to u' > /var/www/html/index.html"
+                sh "chmod -R 777 /var/www/html"
+    }
+}
+}
+}
+                    or
+pipeline{
+    agent{
+        label{
+            label "built-in"
+        } 
+    }
+    stages{
+        stage("httpd"){
+            steps{
+                sh "sudo yum install httpd -y"
+                sh " sudo service httpd start"
+                sh "chmod -R 777 /mnt/index.html"
+                sh "cp -r /mnt/index.html /var/www/html/"
+                sh "chmod -R 777 /var/www/html"
+    }
+}
+}
+}
+
+
+clone-deploy-pipeline
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/wi"
+        } 
+    }
+    stages{
+        stage("clone"){
+            steps{
+               sh "git clone https://github.com/Suraja111/vel1.git -b 22q1"
+               sh "chmod -R 777 /mnt/wi/vel1/index.html"
+    }
+}
+stage("httpd"){
+            steps{
+                sh "sudo yum install httpd -y"
+                sh " sudo service httpd start"
+                sh "sudo cp -r /mnt/wi/vel1/index.html /var/www/html"
+                sh "sudo chmod -R 777 /var/www/html/index.html"
+    }
+}
+}
+}
+
+
+maven-build-job
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/wp"
+        } 
+    }
+    stages{
+        stage("clone"){
+            steps{
+                sh "rm -rf *"
+               sh "git clone https://github.com/Suraja111/project.git"
+        
+    }
+}
+stage("build"){
+            steps{
+                sh "rm -rf /home/root/.m2"
+                sh "cd project && mvn clean install -DskipTests=true"
+                
+                
+}
+}
+}
+}
+
+
+maven-build-deploy job
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/wp"
+        } 
+    }
+    stages{
+        stage("clone"){
+            steps{
+                sh "rm -rf *"
+               sh "git clone https://github.com/Suraja111/project.git"     
+    }
+}
+stage("build"){
+            steps{
+                sh "rm -rf /home/root/.m2"
+                sh "chmod -R 777 /mnt/wp/project"
+                sh "cd project && mvn clean install -DskipTests=true"                
+}
+}
+stage("deploy"){
+            steps{
+              sh "chmod -R 777 /mnt/apache-tomcat-9.0.89/webapps"
+                sh "cp -r project/target/LoginWebApp.war /mnt/apache-tomcat-9.0.89/webapps"
+}
+}
+}
+}
+
+
+scp-build
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/win"
+        } 
+    }
+    stages{
+        stage("clone"){
+            steps{
+               sh "rm -rf /mnt/win/vel1"
+               sh "git clone https://github.com/Suraja111/vel1.git -b 22q1"
+               sh "chmod -R 777 /mnt/win/vel1/index.html"
+               sh " scp -i /mnt/Linux_Mum.pem /mnt/win/vel1/index.html ec2-user@172.31.14.251:/mnt/wi/"
+    }
+}
+stage("httpd"){
+    agent{
+        node {
+            label "slave"
+            customWorkspace "/mnt/wi"
+        }
+    }
+            steps{
+                sh "sudo yum install httpd -y"
+                sh " sudo service httpd start"
+                sh "sudo cp -r index.html /var/www/html"
+                sh "sudo chmod -R 777 /var/www/html/index.html"
+    }
+}
+}
+}
+                                  or
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/wp"
+        } 
+    }
+    stages{
+        stage("clone"){
+            steps{
+               sh "rm -rf /mnt/wp/vel1"
+               sh "git clone https://github.com/Suraja111/vel1.git -b 22q1"
+               sh "chmod -R 777 /mnt/wp/vel1/index.html"
+               sh " scp -i /mnt/Linux_Mum.pem /mnt/wp/vel1/index.html ec2-user@172.31.35.51:/mnt/wi"
+    }
+}
+stage("httpd"){
+    agent{
+        node {
+            label "slave"
+          
+        }
+    }
+            steps{
+                sh "sudo yum install httpd -y"
+                sh " sudo service httpd start"
+                sh "sudo cp -r /mnt/wi/index.html /var/www/html"
+                sh "sudo chmod -R 777 /var/www/html/index.html"
+    }
+}
+}
+}
+
+
+scp-build-deploy
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/wp"
+        } 
+    }
+    stages{
+        stage("clone"){
+            steps{
+                sh "rm -rf *"
+               sh "git clone https://github.com/Suraja111/project.git"
+        
+    }
+}
+stage("build"){
+            steps{
+               sh "rm -rf /root/.m2"
+                sh "cd project && mvn clean install -DskipTests=true"
+                
+                
+}
+}
+stage("deploy"){
+            steps{
+              
+                sh "scp -r -i /mnt/Linux_Mum.pem /mnt/wp/project/target/LoginWebApp.war ec2-user@172.31.32.189:/root/apache-tomcat-9.0.89/webapps"
+                
+                
+}
+}
+}
+}
+
+
+maven-scp-container
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/wp"
+        } 
+    }
+    stages{
+        stage("clone"){
+            steps{
+                sh "rm -rf *"
+               sh "git clone https://github.com/Suraja111/project.git"
+    }
+}
+stage("build"){
+            steps{
+               sh "rm -rf /root/.m2"
+                sh "cd project && mvn clean install -DskipTests=true"
+}
+}
+stage("permision"){
+            steps{
+               sh "chmod -R 777 /mnt/wp/project/target"
+                sh "scp -i /mnt/Linux_Mum.pem /mnt/wp/project/target/LoginWebApp.war ec2-user@172.31.43.111:/mnt"
+}
+}
+stage("run"){
+    agent {
+        node {
+            label"slave"
+        }
+    }
+            steps{
+                sh "sudo docker build -t my-tomcat /mnt"
+                sh "sudo docker run --name QWSDFSDFGa289 -itdp 8088:8080 my-tomcat"
+}
+}
+}
+}
+
+
+Docker-deployment
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/wp"
+        } 
+    }
+stages{
+stage("clone"){
+            steps{
+              sh "rm -rf *"
+              sh "git clone https://github.com/Suraja111/vel1.git -b 22q1"
+}
+}
+        stage("container"){
+            steps{
+                 sh 'docker ps -q | xargs --no-run-if-empty docker stop'
+                    sh 'docker container prune -f'
+                sh "docker run --name vtrn4543 -itdp 70:80 httpd"
+    }
+}
+stage("deploy"){
+            steps{
+              sh "chmod -R 777 /mnt/wp/vel1/index.html"
+                sh "docker cp /mnt/wp/vel1/index.html vtrn4543:/usr/local/apache2/htdocs"
+}
+}
+}
+}
+
+
+Docker-Compose
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/wp"
+        } 
+    }
+    stages{
+        stage("clone"){
+            steps{
+                sh "rm -rf *"
+               sh "git clone https://github.com/Suraja111/project.git"
+    }
+}
+stage("build"){
+            steps{
+               sh "rm -rf /root/.m2"
+                sh "cd project && mvn clean install -DskipTests=true"
+}
+}
+stage("permision"){
+            steps{
+               sh "chmod -R 777 /mnt/wp/project/target"
+                sh "scp -i /mnt/Linux_Mum.pem /mnt/wp/project/target/LoginWebApp.war ec2-user@172.31.12.101:/mnt"
+}
+}
+stage("copy on slave"){
+    agent {
+        node {
+            label"slave"
+        
+            
+        }
+    }
+            steps{
+                sh "sudo cp /mnt/LoginWebApp.war /mnt/compose/file-1"
+                sh "sudo cp /mnt/LoginWebApp.war /mnt/compose/file-2"
+}
+}
+stage("deploy on slave"){
+    agent {
+        node {
+            label"slave"
+             customWorkspace "/mnt/compose"
+            
+        }
+    }
+            steps{
+                sh "sudo docker-compose up -d"
+                
+}
+}
+}
+}
+
+
+image-docker-deploy
+pipeline{
+    agent{
+        label{
+            label "built-in"
+            customWorkspace "/mnt/gp"
+        } 
+    }
+    stages{
+stage("clone"){
+            steps{
+              sh "rm -rf *"
+              sh "git clone https://github.com/Suraja111/project.git"
+}
+}
+stage("build"){
+            steps{
+              sh "rm -rf /root/.m2"
+                sh "cd project && mvn clean install -DskipTests=true"
+}
+}
+stage("deploy"){
+            steps{
+                sh "chmod -R 777 /mnt/gp/project/target/LoginWebApp.war"
+                sh "cp -r /mnt/gp/project/target/LoginWebApp.war /mnt"
+}
+}
+stage("image"){
+            steps{
+                sh "docker build -t mytomcat /mnt"
+                sh 'docker ps -q | xargs --no-run-if-empty docker stop'
+                    sh 'docker container prune -f'
+                 sh "docker run --name axdswtf123 -itdp 8081:8080 mytomcat"
+}
+}
+}
+}
+
+
+jenkins_script
+amazon-linux-extras install java-openjdk11 -y
+yum install git  -y
+yum install docker -y
+systemctl start docker
+systemctl enable docker
+wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.89/bin/apache-tomcat-9.0.89.zip  -P /mnt/
+unzip /mnt/apache-tomcat-9.0.89.zip  -d /mnt
+chmod -R 777 /mnt/apache-tomcat-9.0.89
+rm –rf /mnt/apache-tomcat-9.0.89.zip
+wget https://get.jenkins.io/war-stable/2.414.3/jenkins.war  -P /mnt/apache-tomcat-9.0.89/webapps/
+cd /mnt/apache-tomcat-9.0.89/bin
+./startup.sh
+#####################################################################################
+cat /root/.jenkins/secrets/initialAdminPassword
