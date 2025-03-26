@@ -1,0 +1,25 @@
+Pipeline{
+    agent any
+      
+    stages{
+        stage("clone"){
+            steps{
+                sh "rm -rf *"
+               sh "git clone https://github.com/Suraja111/game-of-life.git"     
+    }
+}
+stage("build"){
+            steps{
+                sh "rm -rf /root/.m2/repository"
+                sh "chmod -R 777 game-of-life"
+                sh "cd game-of-life && mvn clean install -DskipTests=true"                
+}
+}
+stage("deploy"){
+            steps{
+              sh "chmod -R 777 apache-tomcat-9.0.102/webapps"
+                sh "cp -r /root/game-of-life/gameoflife-web/target/gameoflife.war /mnt/apache-tomcat-9.0.102/webapps"
+}
+}
+}
+}
