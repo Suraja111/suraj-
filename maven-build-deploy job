@@ -27,3 +27,34 @@ stage("deploy"){
 }
 }
 }
+                                            or
+pipeline{
+    agent any
+        tools {
+            maven "maven3"
+        } 
+    
+    stages{
+        stage("clone"){
+            steps{
+                sh "rm -rf *"
+               sh "git clone https://github.com/Shantanumajan6/project.git"
+        
+    }
+}
+        stage("build"){
+            steps{
+                
+                sh "cd project && mvn clean install -DskipTests=true"
+                
+                
+}
+}
+        stage("deploy"){
+            steps{
+                
+                sh "cp -r project/target/LoginWebApp.war /mnt/server/apache-tomcat-9.0.102/webapps"
+}
+}
+}
+}
