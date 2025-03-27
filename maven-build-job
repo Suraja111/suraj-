@@ -9,14 +9,14 @@ pipeline{
         stage("clone"){
             steps{
                 sh "rm -rf *"
-               sh "git clone https://github.com/Suraja111/project.git"
+               sh "git clone https://github.com/Shantanumajan6/project.git"
         
     }
 }
 stage("build"){
             steps{
-                sh "rm -rf /home/root/.m2"
-                sh "cd project && mvn clean install -DskipTests=true"
+                
+                sh "cd project && mvn clean install"
                 
                 
 }
