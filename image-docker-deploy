@@ -34,3 +34,58 @@ stage("image"){
 }
 }
 }
+                                                 or new
+pipeline{
+    agent {
+        label{
+            label "built-in"
+            customWorkspace "/mnt/pk"
+        } 
+    }
+        tools {
+            jdk "jdk11"
+            maven "maven3"
+            
+        } 
+    
+    stages{
+        stage("clone"){
+            steps{
+                sh "rm -rf *"
+               sh "git clone https://github.com/Shantanumajan6/project.git"
+        
+    }
+}
+        stage("build"){
+            steps{
+                
+                sh "cd project && mvn clean install -DskipTests=true"
+                
+                
+}
+}
+        stage("deploy"){
+            steps{
+               
+                sh "cp -r /mnt/pk/project/target/LoginWebApp.war /mnt"
+}
+}
+        stage("image"){
+           
+            steps{
+                 
+                sh "docker build -t mytomcat /mnt"
+                sh 'docker ps -q | xargs --no-run-if-empty docker stop'
+                    sh 'docker container prune -f'
+                 sh "docker run --name axdcxswtf123 -itdp 8070:8080 mytomcat"
+                 
+}
+}
+}
+}
+Dockerfile is in mnt 
+Vi Dockerfile
+FROM tomcat:9.0
+CMD ["catalina.sh", "run"]
+COPY LoginWebApp.war /usr/local/tomcat/webapps
+EXPOSE 8080
