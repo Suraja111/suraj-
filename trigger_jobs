@@ -1,0 +1,81 @@
+job1 
+pipeline{
+    agent {
+        label{
+            label "built-in"
+            customWorkspace "/mnt/pk"
+        } 
+    }
+        tools {
+            jdk "jdk11"
+            maven "maven3"
+            
+        } 
+    
+    stages{
+        stage("clone"){
+            steps{
+                sh "rm -rf *"
+               sh "git clone https://github.com/Shantanumajan6/project.git"
+        
+    }
+}
+        stage("build"){
+            steps{
+                
+                sh "cd project && mvn clean install -DskipTests=true"
+                sh "chmod -R 777 /mnt/pk/project/target/LoginWebApp.war"
+                
+                
+}
+}
+        stage("deploy"){
+            steps{
+               
+                sh "cp -r /mnt/pk/project/target/LoginWebApp.war /mnt"
+                sh "chmod -R 777 /mnt/LoginWebApp.war"
+}
+}
+        stage("image"){
+           
+            steps{
+                 script{
+                   withDockerRegistry(credentialsId: '29b2bd43-f91a-457f-819f-29d84bdbee9d', toolName: 'docker') {
+                           sh "docker build -t mytomcat:latest /mnt"
+                           sh "docker tag mytomcat:latest suraj480/mytomcat:latest"
+                           sh "docker push suraj480/mytomcat:latest"
+}  
+                 }
+                
+                
+                 
+}
+}
+stage("Trigger"){
+            steps{
+               
+                build job: "CD_Pipeline" , wait: true
+}
+}
+
+}
+}
+
+                                                 job2
+pipeline{
+    agent any
+      
+    stages{
+        stage("dockerdeploy"){
+            steps{
+                script{
+                   withDockerRegistry(credentialsId: '29b2bd43-f91a-457f-819f-29d84bdbee9d', toolName: 'docker') {
+                           sh "docker run -d --name hfgjhgkj -p 8070:8080 suraj480/mytomcat:latest"
+                          
+                 }
+                 
+    }
+}
+}
+}
+}
