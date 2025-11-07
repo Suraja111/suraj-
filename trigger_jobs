@@ -40,10 +40,10 @@ pipeline{
            
             steps{
                  script{
-                   withDockerRegistry(credentialsId: '29b2bd43-f91a-457f-819f-29d84bdbee9d', toolName: 'docker') {
+                   withDockerRegistry(credentialsId: '9f58046e-4069-41b3-bc0b-164a1082e2d1', toolName: 'docker') {
                            sh "docker build -t mytomcat:latest /mnt"
-                           sh "docker tag mytomcat:latest suraj480/mytomcat:latest"
-                           sh "docker push suraj480/mytomcat:latest"
+                           sh "docker tag mytomcat:latest suraj48088/mytomcat:latest"
+                           sh "docker push suraj48088/mytomcat:latest"
 }  
                  }
                 
@@ -69,8 +69,8 @@ pipeline{
         stage("dockerdeploy"){
             steps{
                 script{
-                   withDockerRegistry(credentialsId: '29b2bd43-f91a-457f-819f-29d84bdbee9d', toolName: 'docker') {
-                           sh "docker run -d --name hfgjhgkj -p 8070:8080 suraj480/mytomcat:latest"
+                   withDockerRegistry(credentialsId: '9f58046e-4069-41b3-bc0b-164a1082e2d1', toolName: 'docker') {
+                           sh "docker run -d --name hfgjhgkj -p 8070:8080 suraj48088/mytomcat:latest"
                           
                  }
                  
