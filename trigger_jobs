@@ -32,7 +32,7 @@ pipeline{
         stage("deploy"){
             steps{
                
-                sh "cp -r /mnt/pk/project/target/LoginWebApp.war /mnt"
+                sh "cp -r /mnt/pk/project/target/LoginWebApp.war /mnt"          #first create Dockerfile in /mnt
                 sh "chmod -R 777 /mnt/LoginWebApp.war"
 }
 }
@@ -79,3 +79,8 @@ pipeline{
 }
 }
 }
+
+Dockerfile in mnt
+FROM tomcat:9.0
+CMD ["catalina.sh","run"]
+COPY LoginWebApp.war /usr/local/tomcat/webapps
